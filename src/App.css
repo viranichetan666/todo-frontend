@@ -32,3 +32,44 @@
 .Login__form button {
   padding: 10px;
 }
+
+.Dashboard__Container {
+  max-width: 600px;
+  width: 100%;
+  margin: 50px auto;
+}
+
+.Dashboard__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.Dashboard__btnLink {
+  background: none;
+  border: none;
+  text-decoration: underline;
+  color: blue;
+}
+
+.Todo__wrapper {
+  display: grid;
+  grid-template-columns: repeat(6, 16.17%);
+  align-items: center;
+  justify-items: center;
+  align-items: center;
+}
+
+.Dashboard__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.Dashboard__uploadBox {
+  flex: 1;
+  border: 1px solid black;
+  padding: 10px;
+  margin-right: 10px;
+}
