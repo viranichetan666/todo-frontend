@@ -63,3 +63,13 @@ export const deleteTodo = (auth, id) => {
     },
   };
 };
+
+export const uploadTodo = (auth, id) => {
+  setHeadersWithAccessToken(auth);
+  return {
+    status: 200,
+    data: {
+      message: "todo uploaded",
+    },
+  };
+};

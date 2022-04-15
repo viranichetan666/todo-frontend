@@ -19,12 +19,8 @@ function* watchLoginRequest() {
       if (response.status === 200) {
         yield put({
           type: authActions.LOGIN_SUCCESS,
-          token: "this is test JWT token",
-          user: {
-            name: "John Doe",
-            email: "johndoe@gmail.com",
-            isAdmin: false,
-          },
+          token: response.data.token,
+          user: response.data.user,
         });
         yield put(push("/"));
       } else {

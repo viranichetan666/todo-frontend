@@ -1,13 +1,19 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import authAction from "../redux/auth/actions";
 import todoAction from "../redux/todo/actions";
 
-const { getAllTodos, requestEditTodo, requestAddTodo, requestDeleteTodo } =
-  todoAction;
+const {
+  getAllTodos,
+  requestEditTodo,
+  requestAddTodo,
+  requestDeleteTodo,
+  requestUploadTodo,
+} = todoAction;
 
 const DashBoard = () => {
+  const [uploadedFile, setUploadedFile] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
@@ -26,7 +32,7 @@ const DashBoard = () => {
   }, []);
 
   const handleUpload = (e) => {
-    console.log(e);
+    dispatch(requestUploadTodo());
   };
 
   const editHandler = (data) => dispatch(requestEditTodo(data));
@@ -45,15 +51,21 @@ const DashBoard = () => {
       </div>
       {isAdmin && (
         <div className="Dashboard__container">
-          <label className="Dashboard__uploadBox">Upload Todos</label>
-          <label htmlFor="uploadbox">icon</label>
-          <input
-            type="file"
-            name="upload"
-            id="uploadbox"
-            onChange={handleUpload}
-            style={{ display: "none" }}
-          />
+          <label htmlFor="uploadbox" className="Dashboard__uploadBox">
+            Upload Todos
+            <input
+              type="file"
+              name="upload"
+              id="uploadbox"
+              onChange={(e) => setUploadedFile(e.target.files[0])}
+              style={{ display: "none" }}
+            />
+          </label>
+          <button
+            onClick={() => dispatch(todoAction.requestUploadTodo(uploadedFile))}
+          >
+            Upload
+          </button>
         </div>
       )}
       <div className="Todo__container">

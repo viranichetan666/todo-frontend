@@ -8,7 +8,13 @@ import {
   delay,
 } from "redux-saga/effects";
 import todoAction from "./actions";
-import { addTodo, deleteTodo, editTodo, fetchTodos } from "./service";
+import {
+  addTodo,
+  deleteTodo,
+  editTodo,
+  fetchTodos,
+  uploadTodo,
+} from "./service";
 
 function* watchFetchTodos() {
   yield takeEvery("FETCH_TODOS_REQUEST", function* () {
@@ -89,11 +95,31 @@ function* watchDeleteTodo() {
   });
 }
 
+function* watchUploadTodo() {
+  yield takeEvery("UPLOAD_TODO_REQUEST", function* (data) {
+    try {
+      const token = yield select((state) => state.auth.token);
+      let response = yield call(uploadTodo, token, data);
+
+      if (response.status === 200) {
+        yield put({
+          type: todoAction.UPLOAD_TODO_SUCCESS,
+        });
+      } else {
+        throw response;
+      }
+    } catch (err) {
+      console.log("erorr", err);
+    }
+  });
+}
+
 export default function* authsaga() {
   yield all([
     fork(watchFetchTodos),
     fork(watchDeleteTodo),
     fork(watchAddTodo),
     fork(watchEditTodo),
+    fork(watchUploadTodo),
   ]);
 }

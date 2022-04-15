@@ -7,6 +7,8 @@ const todoAction = {
   EDIT_TODO_SUCCESS: "EDIT_TODO_SUCCESS",
   DELETE_TODO_REQUEST: "DELETE_TODO_REQUEST",
   DELETE_TODO_SUCCESS: "DELETE_TODO_SUCCESS",
+  UPLOAD_TODO_REQUEST: "UPLOAD_TODO_REQUEST",
+  UPLOAD_TODO_SUCCESS: "UPLOAD_TODO_SUCCESS",
 
   getAllTodos: () => {
     return {
@@ -23,6 +25,10 @@ const todoAction = {
   }),
   requestDeleteTodo: (data) => ({
     type: todoAction.DELETE_TODO_REQUEST,
+    data,
+  }),
+  requestUploadTodo: (data) => ({
+    type: todoAction.UPLOAD_TODO_REQUEST,
     data,
   }),
 };
