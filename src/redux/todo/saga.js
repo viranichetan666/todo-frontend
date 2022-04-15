@@ -25,7 +25,7 @@ function* watchFetchTodos() {
       if (response.status === 200) {
         yield put({
           type: todoAction.FETCH_TODOS_SUCCESS,
-          payload: response.data.todos,
+          payload: response.data,
         });
       } else {
         throw response;
@@ -56,7 +56,7 @@ function* watchAddTodo() {
 }
 
 function* watchEditTodo() {
-  yield takeEvery("EDIT_TODO_REQUEST", function* (data) {
+  yield takeEvery("EDIT_TODO_REQUEST", function* ({ data }) {
     try {
       const token = yield select((state) => state.auth.token);
 
@@ -66,6 +66,7 @@ function* watchEditTodo() {
         yield put({
           type: todoAction.EDIT_TODO_SUCCESS,
         });
+        yield put({ type: todoAction.FETCH_TODOS_REQUEST });
       } else {
         throw response;
       }
@@ -76,15 +77,18 @@ function* watchEditTodo() {
 }
 
 function* watchDeleteTodo() {
-  yield takeEvery("DELETE_TODO_REQUEST", function* (data) {
+  yield takeEvery("DELETE_TODO_REQUEST", function* ({ data }) {
     try {
       const token = yield select((state) => state.auth.token);
 
-      let response = yield call(deleteTodo, token, data.id);
+      let response = yield call(deleteTodo, token, data);
 
       if (response.status === 200) {
         yield put({
           type: todoAction.DELETE_TODO_SUCCESS,
+        });
+        yield put({
+          type: todoAction.FETCH_TODOS_REQUEST,
         });
       } else {
         throw response;

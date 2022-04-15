@@ -16,11 +16,15 @@ function* watchLoginRequest() {
     try {
       const response = yield call(userLogin, data.data);
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         yield put({
           type: authActions.LOGIN_SUCCESS,
           token: response.data.token,
-          user: response.data.user,
+          user: {
+            email: response.data.user.email,
+            name: 'John Doe',
+            isAdmin: true,
+          },
         });
         yield put(push("/"));
       } else {

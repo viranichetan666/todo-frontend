@@ -1,15 +1,8 @@
+import axios from "axios";
 import { setHeadersWithAccessToken } from "../index";
 
+const api_url = 'http://localhost:3000'
+
 export const userLogin = (data) => {
-  return {
-    data: {
-      token: "this is test JWT token",
-      user: {
-        name: "John Doe",
-        email: "johndoe@gmail.com",
-        isAdmin: true,
-      },
-    },
-    status: 200,
-  };
+  return axios.post(`${api_url}/users/login`, data)
 };

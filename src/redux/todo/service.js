@@ -1,37 +1,11 @@
 import { setHeadersWithAccessToken } from "../index";
+import axios from "axios";
 
-const API_BASE = process.env.REACT_APP_APIBASE;
+const api_url = "http://localhost:3000";
 
 export const fetchTodos = (auth) => {
   setHeadersWithAccessToken(auth);
-  return {
-    status: 200,
-    data: {
-      todos: [
-        {
-          id: 1,
-          title: "Value 1",
-          dueDate: "value 2",
-          status: true,
-          user: "john doe",
-        },
-        {
-          id: 2,
-          title: "Value 1",
-          dueDate: "value 2",
-          status: true,
-          user: "john doe",
-        },
-        {
-          id: 3,
-          title: "Value 1",
-          dueDate: "value 2",
-          status: false,
-          user: "King doe",
-        },
-      ],
-    },
-  };
+  return axios.get(`${api_url}/tasks`);
 };
 
 export const addTodo = (auth, data) => {
@@ -46,22 +20,12 @@ export const addTodo = (auth, data) => {
 
 export const editTodo = (auth, data) => {
   setHeadersWithAccessToken(auth);
-  return {
-    status: 200,
-    data: {
-      message: "todo edited",
-    },
-  };
+  return axios.put(`${api_url}/tasks/${data._id}`, data);
 };
 
 export const deleteTodo = (auth, id) => {
   setHeadersWithAccessToken(auth);
-  return {
-    status: 200,
-    data: {
-      message: "todo deleted",
-    },
-  };
+  return axios.delete(`${api_url}/tasks/${id}`);
 };
 
 export const uploadTodo = (auth, id) => {

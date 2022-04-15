@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import authAction from "../redux/auth/actions";
 import todoAction from "../redux/todo/actions";
+import moment from "moment";
 
 const {
   getAllTodos,
@@ -14,6 +15,7 @@ const {
 
 const DashBoard = () => {
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [editTodo, setEditTodo] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
@@ -21,7 +23,7 @@ const DashBoard = () => {
   } = useSelector((state) => state.auth);
 
   const { todos } = useSelector((state) => state.todo);
-
+  console.log(todos, "todos");
   const handleLogout = () => {
     dispatch(authAction.logout());
     navigate("/login");
@@ -35,8 +37,18 @@ const DashBoard = () => {
     dispatch(requestUploadTodo());
   };
 
-  const editHandler = (data) => dispatch(requestEditTodo(data));
+  const editHandler = () => {
+    dispatch(requestEditTodo(editTodo));
+    setEditTodo(null);
+  };
   const deleteHandler = (id) => dispatch(requestDeleteTodo(id));
+
+  const handleOnChange = (e) => {
+    setEditTodo((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
 
   return (
     <div className="Dashboard__Container">
@@ -78,14 +90,71 @@ const DashBoard = () => {
           <p></p>
         </div>
         {todos.map((todo) => (
-          <div className="Todo__wrapper" key={todo.id}>
-            <p>{todo.title}</p>
-            <p>{todo.dueDate}</p>
-            <p>{todo.status ? "done" : "not done"}</p>
-            <p>{todo.user}</p>
-            <button onClick={editHandler.bind(todo)}>Edit</button>
-            <button onClick={deleteHandler.bind(todo.id)}>Delete</button>
-          </div>
+          <form onSubmit={() => {}}>
+            <div className="Todo__wrapper" key={todo.id}>
+              {editTodo && editTodo._id === todo._id ? (
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  value={editTodo.title}
+                  onChange={handleOnChange}
+                ></input>
+              ) : (
+                <p>{todo.title}</p>
+              )}
+              <p>
+                {editTodo && editTodo._id === todo._id ? (
+                  <>
+                    <input
+                      type="date"
+                      value={moment(editTodo.dueDate).format("YYYY-MM-DD")}
+                      name="dueDate"
+                      onChange={handleOnChange}
+                    />
+                  </>
+                ) : (
+                  moment(todo.dueDate).format("L")
+                )}
+              </p>
+              {editTodo && editTodo._id === todo._id ? (
+                <div>
+                  completed
+                  <input
+                    type="checkbox"
+                    id="status"
+                    name="status"
+                    // value={editTodo.status}
+                    checked={editTodo.status === "completed"}
+                    onChange={(e) =>
+                      setEditTodo((prev) => ({
+                        ...prev,
+                        status: e.target.checked ? "completed" : "pending",
+                      }))
+                    }
+                  ></input>
+                </div>
+              ) : (
+                <p>{todo.status}</p>
+              )}
+              <p>{todo.user.email}</p>
+              {editTodo && editTodo._id === todo._id ? (
+                <div>
+                  <button type="submit" onClick={editHandler}>
+                    Update
+                  </button>
+                  <button type="button" onClick={() => setEditTodo(null)}>
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <button onClick={() => setEditTodo(todo)}>Edit</button>
+              )}
+              <button type="button" onClick={() => deleteHandler(todo._id)}>
+                Delete
+              </button>
+            </div>
+          </form>
         ))}
       </div>
     </div>
