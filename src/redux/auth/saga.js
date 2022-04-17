@@ -10,6 +10,7 @@ import {
 import authActions from "./actions";
 import { push } from "react-router-redux";
 import { userLogin } from "./service";
+import { fetchUsers } from "../todo/service";
 
 function* watchLoginRequest() {
   yield takeEvery("LOGIN_REQUEST", function* (data) {
@@ -22,8 +23,8 @@ function* watchLoginRequest() {
           token: response.data.token,
           user: {
             email: response.data.user.email,
-            name: 'John Doe',
-            isAdmin: true,
+            name: response.data.user.email,
+            isAdmin: response.data.user.role === "admin",
           },
         });
         yield put(push("/"));
@@ -37,6 +38,26 @@ function* watchLoginRequest() {
   });
 }
 
+function* watchGetUsers() {
+  yield takeEvery("GET_USERS_REQUEST", function* () {
+    try {
+      const token = yield select((state) => state.auth.token);
+      let response = yield call(fetchUsers, token);
+
+      if (response.status === 200) {
+        yield put({
+          type: authActions.GET_USERS_SUCCESS,
+          payload: response.data,
+        });
+      } else {
+        throw response;
+      }
+    } catch (err) {
+      console.log("erorr", err);
+    }
+  });
+}
+
 export default function* authsaga() {
-  yield all([fork(watchLoginRequest)]);
+  yield all([fork(watchLoginRequest), fork(watchGetUsers)]);
 }

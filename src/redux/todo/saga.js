@@ -13,6 +13,7 @@ import {
   deleteTodo,
   editTodo,
   fetchTodos,
+  fetchUsers,
   uploadTodo,
 } from "./service";
 
@@ -100,15 +101,14 @@ function* watchDeleteTodo() {
 }
 
 function* watchUploadTodo() {
-  yield takeEvery("UPLOAD_TODO_REQUEST", function* (data) {
+  yield takeEvery("UPLOAD_TODO_REQUEST", function* ({ data }) {
     try {
       const token = yield select((state) => state.auth.token);
       let response = yield call(uploadTodo, token, data);
 
-      if (response.status === 200) {
-        yield put({
-          type: todoAction.UPLOAD_TODO_SUCCESS,
-        });
+      if (response.status === 201) {
+        yield put({ type: todoAction.UPLOAD_TODO_SUCCESS });
+        yield put({ type: todoAction.FETCH_TODOS_REQUEST });
       } else {
         throw response;
       }

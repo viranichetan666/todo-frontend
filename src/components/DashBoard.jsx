@@ -13,6 +13,8 @@ const {
   requestUploadTodo,
 } = todoAction;
 
+const { getAllUsers } = authAction;
+
 const DashBoard = () => {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [editTodo, setEditTodo] = useState(null);
@@ -23,7 +25,8 @@ const DashBoard = () => {
   } = useSelector((state) => state.auth);
 
   const { todos } = useSelector((state) => state.todo);
-  console.log(todos, "todos");
+  const { allUsers } = useSelector((state) => state.auth);
+
   const handleLogout = () => {
     dispatch(authAction.logout());
     navigate("/login");
@@ -31,6 +34,7 @@ const DashBoard = () => {
 
   useEffect(() => {
     dispatch(getAllTodos());
+    dispatch(getAllUsers());
   }, []);
 
   const handleUpload = (e) => {
@@ -64,17 +68,28 @@ const DashBoard = () => {
       {isAdmin && (
         <div className="Dashboard__container">
           <label htmlFor="uploadbox" className="Dashboard__uploadBox">
-            Upload Todos
+            {uploadedFile ? uploadedFile.name : "Upload Todos"}
             <input
               type="file"
               name="upload"
               id="uploadbox"
-              onChange={(e) => setUploadedFile(e.target.files[0])}
+              onChange={(e) => {
+                console.log("e.target.files[0]", e.target.files[0]);
+                setUploadedFile(e.target.files[0]);
+              }}
               style={{ display: "none" }}
             />
           </label>
           <button
-            onClick={() => dispatch(todoAction.requestUploadTodo(uploadedFile))}
+            onClick={() => {
+              console.log("dsds", uploadedFile);
+              const formData = new FormData();
+              formData.append("tasks", uploadedFile);
+
+              dispatch(todoAction.requestUploadTodo(formData));
+              setUploadedFile(null);
+            }}
+            disabled={!uploadedFile}
           >
             Upload
           </button>
@@ -90,7 +105,7 @@ const DashBoard = () => {
           <p></p>
         </div>
         {todos.map((todo) => (
-          <form onSubmit={() => {}}>
+          <form key={todo.id}>
             <div className="Todo__wrapper" key={todo.id}>
               {editTodo && editTodo._id === todo._id ? (
                 <input
@@ -105,14 +120,12 @@ const DashBoard = () => {
               )}
               <p>
                 {editTodo && editTodo._id === todo._id ? (
-                  <>
-                    <input
-                      type="date"
-                      value={moment(editTodo.dueDate).format("YYYY-MM-DD")}
-                      name="dueDate"
-                      onChange={handleOnChange}
-                    />
-                  </>
+                  <input
+                    type="date"
+                    value={moment(editTodo.dueDate).format("YYYY-MM-DD")}
+                    name="dueDate"
+                    onChange={handleOnChange}
+                  />
                 ) : (
                   moment(todo.dueDate).format("L")
                 )}
@@ -137,7 +150,18 @@ const DashBoard = () => {
               ) : (
                 <p>{todo.status}</p>
               )}
-              <p>{todo.user.email}</p>
+              {editTodo && editTodo._id === todo._id ? (
+                <>
+                  <select name="assignee">
+                    {allUsers.map((user) => (
+                      <option value={user.id}>{user.email}</option>
+                    ))}
+                  </select>
+                </>
+              ) : (
+                <p>static@dummy.com</p>
+              )}
+
               {editTodo && editTodo._id === todo._id ? (
                 <div>
                   <button type="submit" onClick={editHandler}>

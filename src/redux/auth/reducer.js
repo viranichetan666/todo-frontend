@@ -5,6 +5,7 @@ const initState = {
   loading: false,
   token: null,
   user: null,
+  allUsers: [],
 };
 
 export default function rootReducer(state = initState, action) {
@@ -22,6 +23,12 @@ export default function rootReducer(state = initState, action) {
         token: action.token,
         user: action.user,
       };
+    case authAction.GET_USERS_SUCCESS: {
+      return {
+        ...state,
+        allUsers: action.payload,
+      };
+    }
     case authAction.LOGIN_ERROR:
     case authAction.LOGOUT_REQUEST:
       return {

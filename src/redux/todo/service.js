@@ -8,6 +8,11 @@ export const fetchTodos = (auth) => {
   return axios.get(`${api_url}/tasks`);
 };
 
+export const fetchUsers = (auth) => {
+  setHeadersWithAccessToken(auth);
+  return axios.get(`${api_url}/users`);
+};
+
 export const addTodo = (auth, data) => {
   setHeadersWithAccessToken(auth);
   return {
@@ -28,12 +33,7 @@ export const deleteTodo = (auth, id) => {
   return axios.delete(`${api_url}/tasks/${id}`);
 };
 
-export const uploadTodo = (auth, id) => {
+export const uploadTodo = (auth, data) => {
   setHeadersWithAccessToken(auth);
-  return {
-    status: 200,
-    data: {
-      message: "todo uploaded",
-    },
-  };
+  return axios.post(`${api_url}/tasks/bulk-upload`, data);
 };
