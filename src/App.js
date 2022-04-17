@@ -9,19 +9,19 @@ import { history, persistor, store } from "./redux/store";
 const App = () => {
   return (
     <Provider store={store}>
-      <CustomRouter history={history}>
-        <PersistGate loading={null} persistor={persistor}>
-          <Routes>
-            {LayoutRoutes.map((route, index) => (
-              <Route
-                key={index}
-                path={route.path}
-                element={<route.element />}
-              />
-            ))}
-          </Routes>
-        </PersistGate>
-      </CustomRouter>
+      <PersistGate loading={null} persistor={persistor}>
+        <CustomRouter history={history}>
+            <Routes>
+              {LayoutRoutes.map((route, index) => (
+                <Route
+                  key={index}
+                  path={route.path}
+                  element={<route.element />}
+                />
+              ))}
+            </Routes>
+        </CustomRouter>
+      </PersistGate>
     </Provider>
   );
 };

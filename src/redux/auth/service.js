@@ -1,7 +1,6 @@
 import axios from "axios";
-import { setHeadersWithAccessToken } from "../index";
 
-const api_url = 'http://localhost:3000'
+const api_url = process.env.REACT_APP_APIBASE;
 
 export const userLogin = (data) => {
   return axios.post(`${api_url}/users/login`, data)

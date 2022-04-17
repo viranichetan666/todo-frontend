@@ -23,10 +23,10 @@ const Login = () => {
     }));
 
   return (
-    <div className="Login__container">
-      <div className="Login__wrapper">
-        <div className="Login__header">What TODO?</div>
-        <form className="Login__form" onSubmit={handleLogin}>
+    <div className="login__container">
+      <div className="login__wrapper">
+        <div className="login__header">What TODO?</div>
+        <form className="login__form" onSubmit={handleLogin}>
           <input
             type="email"
             name="email"

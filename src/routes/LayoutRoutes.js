@@ -1,9 +1,9 @@
-import Login from "../components/Login";
-import DashBoardLayout from "../components/DashBoardLayout";
+import Login from "../container/Login";
+import DashBoardLayout from "../container/DashBoard";
 
 const LayoutRoutes = [
   { path: "/login", element: Login },
-  { path: "/*", element: DashBoardLayout },
+  { path: "/dashboard", element: DashBoardLayout },
 ];
 
 export default LayoutRoutes;

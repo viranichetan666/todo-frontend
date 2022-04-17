@@ -25,7 +25,7 @@ const DashBoard = () => {
   useEffect(() => {
     dispatch(getAllTodos());
     dispatch(getAllUsers());
-  }, []);
+  }, [dispatch]);
 
   const handleLogout = () => {
     dispatch(authAction.logout());
@@ -58,25 +58,26 @@ const DashBoard = () => {
   };
 
   return (
-    <div className="Dashboard__Container">
-      <div className="Login__header">
+    <div className="dashboard_main__container">
+      <div className="login__header">
         {isAdmin ? "WTD Admin" : "What TODO?"}?
       </div>
-      <div className="Dashboard__header">
+      <div className="dashboard__header">
         <p>Welcome, {isAdmin ? "Admin" : "User"} !</p>
-        <button className="Dashboard__btnLink" onClick={handleLogout}>
+        <button className="dashboard__btn_link" onClick={handleLogout}>
           Signout
         </button>
       </div>
       {isAdmin && (
-        <div className="Dashboard__container">
-          <label htmlFor="uploadbox" className="Dashboard__uploadBox">
+        <div className="dashboard__container">
+          <label htmlFor="uploadbox" className="dashboard__uploadBox">
             {uploadedFile ? uploadedFile.name : "Upload Todos"}
             <input
               type="file"
               name="upload"
               id="uploadbox"
               onChange={(e) => {
+                console.log("e",e)
                 setUploadedFile(e.target.files[0]);
               }}
               style={{ display: "none" }}
@@ -87,20 +88,20 @@ const DashBoard = () => {
           </button>
         </div>
       )}
-      <div className="Todo__container">
-        <div className="Todo__wrapper">
+      <div className="todo__container">
+        <div className="todo__wrapper todo__table_header">
           <p>Title</p>
           <p>Due Date</p>
           <p>Status</p>
           <p>User</p>
           <p></p>
-          <p></p>
         </div>
         {todos.map((todo) => (
           <form key={todo._id}>
-            <div className="Todo__wrapper" key={todo.id}>
+            <div className="todo__wrapper" key={todo.id}>
               {editTodo && editTodo._id === todo._id ? (
                 <input
+                  className="todo__form_input"
                   type="text"
                   id="title"
                   name="title"
@@ -113,6 +114,7 @@ const DashBoard = () => {
               <p>
                 {editTodo && editTodo._id === todo._id ? (
                   <input
+                    className="todo__form_input"
                     type="date"
                     value={moment(editTodo.dueDate).format("YYYY-MM-DD")}
                     name="dueDate"
@@ -156,7 +158,7 @@ const DashBoard = () => {
 
               {editTodo && editTodo._id === todo._id ? (
                 <div>
-                  <button type="submit" onClick={editHandler}>
+                  <button type="button" onClick={editHandler} style={{marginRight: 10}}>
                     Update
                   </button>
                   <button type="button" onClick={() => setEditTodo(null)}>
@@ -164,11 +166,13 @@ const DashBoard = () => {
                   </button>
                 </div>
               ) : (
-                <button onClick={() => setEditTodo(todo)}>Edit</button>
+                <div>
+                  <button type="button" onClick={() => setEditTodo(todo)} style={{marginRight: 10}}>Edit</button>
+                  <button type="button" onClick={() => deleteHandler(todo._id)}>
+                    Delete
+                  </button>
+                </div>
               )}
-              <button type="button" onClick={() => deleteHandler(todo._id)}>
-                Delete
-              </button>
             </div>
           </form>
         ))}

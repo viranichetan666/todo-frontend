@@ -5,7 +5,6 @@ import {
   select,
   takeEvery,
   call,
-  delay,
 } from "redux-saga/effects";
 import authActions from "./actions";
 import { push } from "react-router-redux";
@@ -28,7 +27,7 @@ function* watchLoginRequest() {
             isAdmin: response.data.user.role === "admin",
           },
         });
-        yield put(push("/"));
+        yield put(push("/dashboard"));
       } else {
         throw response;
       }
