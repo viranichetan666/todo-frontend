@@ -5,13 +5,8 @@ import authAction from "../redux/auth/actions";
 import todoAction from "../redux/todo/actions";
 import moment from "moment";
 
-const {
-  getAllTodos,
-  requestEditTodo,
-  requestAddTodo,
-  requestDeleteTodo,
-  requestUploadTodo,
-} = todoAction;
+const { getAllTodos, requestEditTodo, requestDeleteTodo, requestUploadTodo } =
+  todoAction;
 
 const { getAllUsers } = authAction;
 
@@ -20,31 +15,35 @@ const DashBoard = () => {
   const [editTodo, setEditTodo] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const {
     user: { isAdmin },
   } = useSelector((state) => state.auth);
-
   const { todos } = useSelector((state) => state.todo);
   const { allUsers } = useSelector((state) => state.auth);
-
-  const handleLogout = () => {
-    dispatch(authAction.logout());
-    navigate("/login");
-  };
 
   useEffect(() => {
     dispatch(getAllTodos());
     dispatch(getAllUsers());
   }, []);
 
-  const handleUpload = (e) => {
-    dispatch(requestUploadTodo());
+  const handleLogout = () => {
+    dispatch(authAction.logout());
+    navigate("/login");
+  };
+
+  const handleUpload = () => {
+    const formData = new FormData();
+    formData.append("tasks", uploadedFile);
+    dispatch(requestUploadTodo(formData));
+    setUploadedFile(null);
   };
 
   const editHandler = () => {
     dispatch(requestEditTodo(editTodo));
     setEditTodo(null);
   };
+
   const deleteHandler = (id) => dispatch(requestDeleteTodo(id));
 
   const handleOnChange = (e) => {
@@ -52,6 +51,10 @@ const DashBoard = () => {
       ...prev,
       [e.target.name]: e.target.value,
     }));
+  };
+
+  const handleAssign = (e, todoId) => {
+    dispatch(todoAction.assignTodo({ todoId, user: e.target.value || null }));
   };
 
   return (
@@ -74,23 +77,12 @@ const DashBoard = () => {
               name="upload"
               id="uploadbox"
               onChange={(e) => {
-                console.log("e.target.files[0]", e.target.files[0]);
                 setUploadedFile(e.target.files[0]);
               }}
               style={{ display: "none" }}
             />
           </label>
-          <button
-            onClick={() => {
-              console.log("dsds", uploadedFile);
-              const formData = new FormData();
-              formData.append("tasks", uploadedFile);
-
-              dispatch(todoAction.requestUploadTodo(formData));
-              setUploadedFile(null);
-            }}
-            disabled={!uploadedFile}
-          >
+          <button onClick={handleUpload} disabled={!uploadedFile}>
             Upload
           </button>
         </div>
@@ -105,7 +97,7 @@ const DashBoard = () => {
           <p></p>
         </div>
         {todos.map((todo) => (
-          <form key={todo.id}>
+          <form key={todo._id}>
             <div className="Todo__wrapper" key={todo.id}>
               {editTodo && editTodo._id === todo._id ? (
                 <input
@@ -137,7 +129,6 @@ const DashBoard = () => {
                     type="checkbox"
                     id="status"
                     name="status"
-                    // value={editTodo.status}
                     checked={editTodo.status === "completed"}
                     onChange={(e) =>
                       setEditTodo((prev) => ({
@@ -150,17 +141,18 @@ const DashBoard = () => {
               ) : (
                 <p>{todo.status}</p>
               )}
-              {editTodo && editTodo._id === todo._id ? (
-                <>
-                  <select name="assignee">
-                    {allUsers.map((user) => (
-                      <option value={user.id}>{user.email}</option>
-                    ))}
-                  </select>
-                </>
-              ) : (
-                <p>static@dummy.com</p>
-              )}
+              <select
+                name="assignee"
+                onChange={(e) => handleAssign(e, todo._id)}
+                value={allUsers.find((u) => u._id === todo.user)?._id || ""}
+              >
+                <option value="">Not Assigned</option>
+                {allUsers.map((user) => (
+                  <option key={user._id} value={user._id}>
+                    {user.email}
+                  </option>
+                ))}
+              </select>
 
               {editTodo && editTodo._id === todo._id ? (
                 <div>

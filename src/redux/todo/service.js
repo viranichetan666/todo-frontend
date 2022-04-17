@@ -37,3 +37,8 @@ export const uploadTodo = (auth, data) => {
   setHeadersWithAccessToken(auth);
   return axios.post(`${api_url}/tasks/bulk-upload`, data);
 };
+
+export const assignTodo = (auth, data) => {
+  setHeadersWithAccessToken(auth);
+  return axios.put(`${api_url}/tasks/assign-task/${data.todoId}`, data);
+};

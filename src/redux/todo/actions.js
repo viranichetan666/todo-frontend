@@ -9,6 +9,8 @@ const todoAction = {
   DELETE_TODO_SUCCESS: "DELETE_TODO_SUCCESS",
   UPLOAD_TODO_REQUEST: "UPLOAD_TODO_REQUEST",
   UPLOAD_TODO_SUCCESS: "UPLOAD_TODO_SUCCESS",
+  ASSIGN_TODO_REQUEST: "ASSIGN_TODO_REQUEST",
+  ASSIGN_TODO_SUCCESS: "ASSIGN_TODO_SUCCESS",
 
   getAllTodos: () => {
     return {
@@ -29,6 +31,10 @@ const todoAction = {
   }),
   requestUploadTodo: (data) => ({
     type: todoAction.UPLOAD_TODO_REQUEST,
+    data,
+  }),
+  assignTodo: (data) => ({
+    type: todoAction.ASSIGN_TODO_REQUEST,
     data,
   }),
 };

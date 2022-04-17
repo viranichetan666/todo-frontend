@@ -14,6 +14,7 @@ import {
   editTodo,
   fetchTodos,
   fetchUsers,
+  assignTodo,
   uploadTodo,
 } from "./service";
 
@@ -118,6 +119,24 @@ function* watchUploadTodo() {
   });
 }
 
+function* watchAssignTodo() {
+  yield takeEvery("ASSIGN_TODO_REQUEST", function* ({ data }) {
+    try {
+      const token = yield select((state) => state.auth.token);
+      let response = yield call(assignTodo, token, data);
+
+      if (response.status === 200) {
+        yield put({ type: todoAction.ASSIGN_TODO_SUCCESS });
+        yield put({ type: todoAction.FETCH_TODOS_REQUEST });
+      } else {
+        throw response;
+      }
+    } catch (err) {
+      console.log("erorr", err);
+    }
+  });
+}
+
 export default function* authsaga() {
   yield all([
     fork(watchFetchTodos),
@@ -125,5 +144,6 @@ export default function* authsaga() {
     fork(watchAddTodo),
     fork(watchEditTodo),
     fork(watchUploadTodo),
+    fork(watchAssignTodo),
   ]);
 }

@@ -22,6 +22,7 @@ function* watchLoginRequest() {
           type: authActions.LOGIN_SUCCESS,
           token: response.data.token,
           user: {
+            id: response.data.user._id,
             email: response.data.user.email,
             name: response.data.user.email,
             isAdmin: response.data.user.role === "admin",
