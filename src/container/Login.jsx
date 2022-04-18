@@ -25,7 +25,7 @@ const Login = () => {
   return (
     <div className="login__container">
       <div className="login__wrapper">
-        <div className="login__header">What TODO?</div>
+        <div className="login__header">User Login</div>
         <form className="login__form" onSubmit={handleLogin}>
           <input
             type="email"

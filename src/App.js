@@ -1,5 +1,5 @@
 import "./App.css";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate,  } from "react-router-dom";
 import LayoutRoutes from "./routes/LayoutRoutes";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
@@ -19,6 +19,7 @@ const App = () => {
                   element={<route.element />}
                 />
               ))}
+              <Route path="/*" element={<Navigate to="/dashboard" />} /> 
             </Routes>
         </CustomRouter>
       </PersistGate>

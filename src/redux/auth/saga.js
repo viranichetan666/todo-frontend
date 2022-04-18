@@ -4,18 +4,17 @@ import {
   put,
   select,
   takeEvery,
-  call,
 } from "redux-saga/effects";
 import authActions from "./actions";
 import { push } from "react-router-redux";
-import { userLogin } from "./service";
-import { fetchUsers } from "../todo/service";
+import AuthApi from "./../../services/auth.service";
+import TaskApi from "./../../services/task.service";
 
 function* watchLoginRequest() {
-  yield takeEvery("LOGIN_REQUEST", function* (data) {
+  yield takeEvery(authActions.LOGIN_REQUEST, function* (data) {
     try {
-      const response = yield call(userLogin, data.data);
-
+      const authApi = new AuthApi(null);
+      const response = yield authApi.userLogin(data.data);
       if (response.status === 201) {
         yield put({
           type: authActions.LOGIN_SUCCESS,
@@ -39,10 +38,11 @@ function* watchLoginRequest() {
 }
 
 function* watchGetUsers() {
-  yield takeEvery("GET_USERS_REQUEST", function* () {
+  yield takeEvery(authActions.GET_USERS_REQUEST, function* () {
     try {
       const token = yield select((state) => state.auth.token);
-      let response = yield call(fetchUsers, token);
+      const taskApi = new TaskApi(token);
+      const response = yield taskApi.fetchUsers();
 
       if (response.status === 200) {
         yield put({

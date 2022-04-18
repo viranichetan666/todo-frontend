@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import authAction from "../redux/auth/actions";
@@ -16,9 +16,7 @@ const DashBoard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const {
-    user: { isAdmin },
-  } = useSelector((state) => state.auth);
+  const isAdmin = useSelector((state) => state?.auth?.user?.isAdmin);
   const { todos } = useSelector((state) => state.todo);
   const { allUsers } = useSelector((state) => state.auth);
 
@@ -77,7 +75,7 @@ const DashBoard = () => {
               name="upload"
               id="uploadbox"
               onChange={(e) => {
-                console.log("e",e)
+                console.log("e", e)
                 setUploadedFile(e.target.files[0]);
               }}
               style={{ display: "none" }}
@@ -93,7 +91,10 @@ const DashBoard = () => {
           <p>Title</p>
           <p>Due Date</p>
           <p>Status</p>
-          <p>User</p>
+          {
+            isAdmin &&
+            <p>User</p>
+          }
           <p></p>
         </div>
         {todos.map((todo) => (
@@ -143,22 +144,24 @@ const DashBoard = () => {
               ) : (
                 <p>{todo.status}</p>
               )}
-              <select
-                name="assignee"
-                onChange={(e) => handleAssign(e, todo._id)}
-                value={allUsers.find((u) => u._id === todo.user)?._id || ""}
-              >
-                <option value="">Not Assigned</option>
-                {allUsers.map((user) => (
-                  <option key={user._id} value={user._id}>
-                    {user.email}
-                  </option>
-                ))}
-              </select>
-
+              {
+                isAdmin &&
+                <select
+                  name="assignee"
+                  onChange={(e) => handleAssign(e, todo._id)}
+                  value={allUsers.find((u) => u._id === todo.user)?._id || ""}
+                >
+                  <option value="">Not Assigned</option>
+                  {allUsers.map((user) => (
+                    <option key={user._id} value={user._id}>
+                      {user.email}
+                    </option>
+                  ))}
+                </select>
+              }
               {editTodo && editTodo._id === todo._id ? (
                 <div>
-                  <button type="button" onClick={editHandler} style={{marginRight: 10}}>
+                  <button type="button" onClick={editHandler} style={{ marginRight: 10 }}>
                     Update
                   </button>
                   <button type="button" onClick={() => setEditTodo(null)}>
@@ -167,10 +170,13 @@ const DashBoard = () => {
                 </div>
               ) : (
                 <div>
-                  <button type="button" onClick={() => setEditTodo(todo)} style={{marginRight: 10}}>Edit</button>
-                  <button type="button" onClick={() => deleteHandler(todo._id)}>
-                    Delete
-                  </button>
+                  <button type="button" onClick={() => setEditTodo(todo)} style={{ marginRight: 10 }}>Edit</button>
+                  {
+                    isAdmin &&
+                    <button type="button" onClick={() => deleteHandler(todo._id)}>
+                      Delete
+                    </button>
+                  }
                 </div>
               )}
             </div>

@@ -4,25 +4,17 @@ import {
   put,
   select,
   takeEvery,
-  call,
-  delay,
 } from "redux-saga/effects";
 import todoAction from "./actions";
-import {
-  addTodo,
-  deleteTodo,
-  editTodo,
-  fetchTodos,
-  fetchUsers,
-  assignTodo,
-  uploadTodo,
-} from "./service";
+
+import TaskApi from "./../../services/task.service";
 
 function* watchFetchTodos() {
-  yield takeEvery("FETCH_TODOS_REQUEST", function* () {
+  yield takeEvery(todoAction.FETCH_TODOS_REQUEST, function* () {
     try {
       const token = yield select((state) => state.auth.token);
-      let response = yield call(fetchTodos, token);
+      const taskApi = new TaskApi(token);
+      const response = yield taskApi.fetchTodos();
 
       if (response.status === 200) {
         yield put({
@@ -38,32 +30,32 @@ function* watchFetchTodos() {
   });
 }
 
-function* watchAddTodo() {
-  yield takeEvery("ADD_TODO_REQUEST", function* (data) {
-    try {
-      const token = yield select((state) => state.auth.token);
-      let response = yield call(addTodo, token, data);
-
-      if (response.status === 200) {
-        yield put({
-          type: todoAction.ADD_TODO_SUCCESS,
-        });
-      } else {
-        throw response;
-      }
-    } catch (err) {
-      console.log("erorr", err);
-    }
-  });
-}
+// function* watchAddTodo() {
+//   yield takeEvery("ADD_TODO_REQUEST", function* (data) {
+//     try {
+//       const token = yield select((state) => state.auth.token);
+//       const taskApi = new TaskApi(token);
+//       const response = yield taskApi.addTodo(data);
+//       if (response.status === 200) {
+//         yield put({
+//           type: todoAction.ADD_TODO_SUCCESS,
+//         });
+//       } else {
+//         throw response;
+//       }
+//     } catch (err) {
+//       console.log("erorr", err);
+//     }
+//   });
+// }
 
 function* watchEditTodo() {
-  yield takeEvery("EDIT_TODO_REQUEST", function* ({ data }) {
+  yield takeEvery(todoAction.EDIT_TODO_REQUEST, function* ({ data }) {
     try {
       const token = yield select((state) => state.auth.token);
 
-      let response = yield call(editTodo, token, data);
-
+      const taskApi = new TaskApi(token);
+      const response = yield taskApi.editTodo(data);
       if (response.status === 200) {
         yield put({
           type: todoAction.EDIT_TODO_SUCCESS,
@@ -79,12 +71,12 @@ function* watchEditTodo() {
 }
 
 function* watchDeleteTodo() {
-  yield takeEvery("DELETE_TODO_REQUEST", function* ({ data }) {
+  yield takeEvery(todoAction.DELETE_TODO_REQUEST, function* ({ data }) {
     try {
       const token = yield select((state) => state.auth.token);
 
-      let response = yield call(deleteTodo, token, data);
-
+      const taskApi = new TaskApi(token);
+      const response = yield taskApi.deleteTodo(data);
       if (response.status === 200) {
         yield put({
           type: todoAction.DELETE_TODO_SUCCESS,
@@ -102,11 +94,11 @@ function* watchDeleteTodo() {
 }
 
 function* watchUploadTodo() {
-  yield takeEvery("UPLOAD_TODO_REQUEST", function* ({ data }) {
+  yield takeEvery(todoAction.UPLOAD_TODO_REQUEST, function* ({ data }) {
     try {
       const token = yield select((state) => state.auth.token);
-      let response = yield call(uploadTodo, token, data);
-
+      const taskApi = new TaskApi(token);
+      const response = yield taskApi.uploadTodo(data);
       if (response.status === 201) {
         yield put({ type: todoAction.UPLOAD_TODO_SUCCESS });
         yield put({ type: todoAction.FETCH_TODOS_REQUEST });
@@ -120,11 +112,11 @@ function* watchUploadTodo() {
 }
 
 function* watchAssignTodo() {
-  yield takeEvery("ASSIGN_TODO_REQUEST", function* ({ data }) {
+  yield takeEvery(todoAction.ASSIGN_TODO_REQUEST, function* ({ data }) {
     try {
       const token = yield select((state) => state.auth.token);
-      let response = yield call(assignTodo, token, data);
-
+      const taskApi = new TaskApi(token);
+      const response = yield taskApi.assignTodo(data);
       if (response.status === 200) {
         yield put({ type: todoAction.ASSIGN_TODO_SUCCESS });
         yield put({ type: todoAction.FETCH_TODOS_REQUEST });
@@ -141,7 +133,7 @@ export default function* authsaga() {
   yield all([
     fork(watchFetchTodos),
     fork(watchDeleteTodo),
-    fork(watchAddTodo),
+    // fork(watchAddTodo),
     fork(watchEditTodo),
     fork(watchUploadTodo),
     fork(watchAssignTodo),
